@@ -1,0 +1,142 @@
+graph TB
+    %% Sensores IoT
+    subgraph "Sensores IoT"
+        S1[Sensor de Nível de Água SEWER-001]
+        S2[Sensor de Gases Tóxicos SEWER-002]
+        S3[Sensor Combinado SEWER-003]
+        S4[Sensor de Nível de Água SEWER-004]
+        S5[Sensor de Gases Tóxicos SEWER-005]
+    end
+
+    %% Comunicação
+    subgraph "Comunicação"
+        MQTT[Broker MQTT Protocolo IoT]
+        API_GATEWAY[API Gateway Roteamento de Dados]
+    end
+
+    %% Backend
+    subgraph "Backend Node.js"
+        SERVER[Servidor Express Port 3001]
+        WEBSOCKET[WebSocket Server Tempo Real]
+        AUTH[Sistema de Autenticação JWT]
+        
+        subgraph "APIs REST"
+            API_SENSORS[API Sensors Gerenciar Sensores]
+            API_ALERTS[API Alerts Sistema de Alertas]
+            API_DASHBOARD[API Dashboard Dados do Dashboard]
+            API_REPORTS[API Reports Relatórios]
+        end
+        
+        subgraph "Serviços"
+            ALERT_SERVICE[Serviço de Alertas Processamento]
+            WHATSAPP_SERVICE[Serviço WhatsApp Notificações]
+            DATA_PROCESSOR[Processador de Dados Análise em Tempo Real]
+        end
+    end
+
+    %% Banco de Dados
+    subgraph "Banco de Dados"
+        MYSQL[(MySQL Database sewer_monitoring)]
+        
+        subgraph "Tabelas"
+            TB_SENSORS[sensors Cadastro de Sensores]
+            TB_READINGS[sensor_readings Leituras dos Sensores]
+            TB_ALERTS[alerts Histórico de Alertas]
+            TB_USERS[users Usuários do Sistema]
+        end
+    end
+
+    %% Frontend Web
+    subgraph "Frontend Web React"
+        WEB_APP[Aplicação Web Port 5173]
+        
+        subgraph "Componentes Web"
+            LOGIN_WEB[Tela de Login]
+            DASHBOARD_WEB[Dashboard Principal]
+            MAP_WEB[Mapa Interativo Leaflet]
+            ALERTS_WEB[Lista de Alertas]
+            REPORTS_WEB[Relatórios]
+            CHARTS_WEB[Gráficos Dinâmicos Recharts]
+        end
+    end
+
+    %% Mobile App
+    subgraph "Aplicativo Mobile React Native"
+        MOBILE_APP[App Mobile Expo React Native]
+        
+        subgraph "Telas Mobile"
+            LOGIN_MOBILE[Tela de Login]
+            DASHBOARD_MOBILE[Dashboard Mobile]
+            MAP_MOBILE[Mapa de Sensores]
+            ALERTS_MOBILE[Alertas Mobile]
+            REPORTS_MOBILE[Relatórios Mobile]
+        end
+    end
+
+    %% Notificações
+    subgraph "Sistema de Notificações"
+        WHATSAPP[WhatsApp API Alertas Críticos]
+        EMAIL[Sistema de Email Relatórios]
+        PUSH[Push Notifications Mobile]
+    end
+
+    %% Fluxo de Dados
+    S1 --> MQTT
+    S2 --> MQTT
+    S3 --> MQTT
+    S4 --> MQTT
+    S5 --> MQTT
+    
+    MQTT --> API_GATEWAY
+    API_GATEWAY --> SERVER
+    
+    SERVER --> API_SENSORS
+    SERVER --> API_ALERTS
+    SERVER --> API_DASHBOARD
+    SERVER --> API_REPORTS
+    
+    SERVER --> ALERT_SERVICE
+    SERVER --> WHATSAPP_SERVICE
+    SERVER --> DATA_PROCESSOR
+    
+    API_SENSORS --> TB_SENSORS
+    DATA_PROCESSOR --> TB_READINGS
+    ALERT_SERVICE --> TB_ALERTS
+    AUTH --> TB_USERS
+    
+    SERVER --> WEBSOCKET
+    WEBSOCKET --> WEB_APP
+    WEBSOCKET --> MOBILE_APP
+    
+    WEB_APP --> LOGIN_WEB
+    WEB_APP --> DASHBOARD_WEB
+    WEB_APP --> MAP_WEB
+    WEB_APP --> ALERTS_WEB
+    WEB_APP --> REPORTS_WEB
+    WEB_APP --> CHARTS_WEB
+    
+    MOBILE_APP --> LOGIN_MOBILE
+    MOBILE_APP --> DASHBOARD_MOBILE
+    MOBILE_APP --> MAP_MOBILE
+    MOBILE_APP --> ALERTS_MOBILE
+    MOBILE_APP --> REPORTS_MOBILE
+    
+    ALERT_SERVICE --> WHATSAPP
+    ALERT_SERVICE --> EMAIL
+    ALERT_SERVICE --> PUSH
+    
+    %% Estilos
+    classDef sensor fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef database fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef frontend fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef mobile fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef notification fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+    
+    class S1,S2,S3,S4,S5 sensor
+    class SERVER,WEBSOCKET,AUTH,API_SENSORS,API_ALERTS,API_DASHBOARD,API_REPORTS,ALERT_SERVICE,WHATSAPP_SERVICE,DATA_PROCESSOR backend
+    class MYSQL,TB_SENSORS,TB_READINGS,TB_ALERTS,TB_USERS database
+    class WEB_APP,LOGIN_WEB,DASHBOARD_WEB,MAP_WEB,ALERTS_WEB,REPORTS_WEB,CHARTS_WEB frontend
+    class MOBILE_APP,LOGIN_MOBILE,DASHBOARD_MOBILE,MAP_MOBILE,ALERTS_MOBILE,REPORTS_MOBILE mobile
+    class WHATSAPP,EMAIL,PUSH notification
+
